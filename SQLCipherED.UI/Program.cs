@@ -8,7 +8,7 @@ namespace SQLCipherED.UI
 {
     class Program
     {        
-        private const string _helpTitle = "SQLcipher DB standlone decryptor";
+        private const string _helpTitle = "SQLcipher DB standalone decryptor";
         private const string _helpText = "Usage: runner-sqlcipher-ed -i [dbSource] [-p [passphrase] or -b [hexString]] {-o [outputPath] -v [sqlCipherVersion] -ps [pageSize] -ka [keyKdfAlgo] -ki [keyKdfIter] -ha [hmacKdfAlgo] }\n\n" +
             "-i [Database source] - SQLCipher source path\n" +
             "-p [Passphrase] - Encrypt/decrypt passphrase\n" +
