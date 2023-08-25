@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLCipherED", "SQLCipherED\SQLCipherED.csproj", "{F3E5C644-DD0C-4002-87AE-631273CE9DFD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLCipherED.UI", "SQLCipherED.UI\SQLCipherED.UI.csproj", "{EF1B7284-3B04-48F4-865D-71E2112F5DEB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLCipherED.Tests", "SQLCipherED.Tests\SQLCipherED.Tests.csproj", "{8633AC27-412E-4DF9-B482-DF6891BC09AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Debug|x64.ActiveCfg = Debug|x64
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Debug|x64.Build.0 = Debug|x64
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Debug|x86.ActiveCfg = Debug|x86
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Debug|x86.Build.0 = Debug|x86
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Release|x64.ActiveCfg = Release|x64
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Release|x64.Build.0 = Release|x64
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Release|x86.ActiveCfg = Release|x86
+		{F3E5C644-DD0C-4002-87AE-631273CE9DFD}.Release|x86.Build.0 = Release|x86
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Debug|x64.ActiveCfg = Debug|x64
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Debug|x64.Build.0 = Debug|x64
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Debug|x86.ActiveCfg = Debug|x86
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Debug|x86.Build.0 = Debug|x86
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Release|x64.ActiveCfg = Release|x64
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Release|x64.Build.0 = Release|x64
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Release|x86.ActiveCfg = Release|x86
+		{EF1B7284-3B04-48F4-865D-71E2112F5DEB}.Release|x86.Build.0 = Release|x86
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Debug|x64.ActiveCfg = Debug|x64
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Debug|x64.Build.0 = Debug|x64
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Debug|x86.ActiveCfg = Debug|x86
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Debug|x86.Build.0 = Debug|x86
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Release|x64.ActiveCfg = Release|x64
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Release|x64.Build.0 = Release|x64
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Release|x86.ActiveCfg = Release|x86
+		{8633AC27-412E-4DF9-B482-DF6891BC09AA}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF84C535-4049-4E6D-A6A2-C30788508899}
+	EndGlobalSection
+EndGlobal

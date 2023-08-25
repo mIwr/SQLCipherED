@@ -1,0 +1,12 @@
+name: ci_build_skip
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "**/*.cs"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "No build required"'

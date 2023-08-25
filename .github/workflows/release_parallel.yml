@@ -1,0 +1,196 @@
+name: Build and release
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/**"
+      - "**/*.cs"
+      - "**/*.csproj"
+      
+concurrency:
+  group: proj-${{ github.head_ref }}
+  cancel-in-progress: true
+      
+jobs:
+
+  unit_tests:
+    name: Unit tests 
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+      - name: Launch tests
+        run: dotnet test --nologo
+
+  build_win_x64:
+    name: Build Windows x64 release and upload artifact
+    needs: unit_tests
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARCH: win-x64
+      BUILD_DIR: ./build/SQLCipherED.UI/Release/net6.0/win-x64
+      BUILD_ARTIFACTS: SQLCipherED.dll runner-sqlcipher-ed.dll runner-sqlcipher-ed.exe runner-sqlcipher-ed.runtimeconfig.json
+      ZIP_FILE: sqlcipher-ed_win-x64.zip
+    outputs:
+      release_ver: ${{ steps.app_proj_version.outputs.assembly-version }}
+     
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+      
+      - name: Parse app csproj version
+        id: app_proj_version
+        uses: kzrnm/get-net-sdk-project-versions-action@v1
+        with:
+          proj-path: SQLCipherED.UI/SQLCipherED.UI.csproj
+          
+      - name: Build CLI app
+        run: dotnet build SQLCipherED.UI/SQLCipherED.UI.csproj -r ${{env.BUILD_ARCH}} -c Release
+        
+      - name: Zip build
+        run: cd ${{env.BUILD_DIR}} && zip ${{env.ZIP_FILE}} ${{env.BUILD_ARTIFACTS}}
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app_${{env.BUILD_ARCH}}
+          path: ${{env.BUILD_DIR}}/${{env.ZIP_FILE}}
+          
+  build_win_x86:
+    name: Build Windows x86 release and upload artifact
+    needs: unit_tests
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARCH: win-x86
+      BUILD_DIR: ./build/SQLCipherED.UI/Release/net6.0/win-x86
+      BUILD_ARTIFACTS: SQLCipherED.dll runner-sqlcipher-ed.dll runner-sqlcipher-ed.exe runner-sqlcipher-ed.runtimeconfig.json
+      ZIP_FILE: sqlcipher-ed_win-x86.zip
+    
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+         
+      - name: Build CLI app
+        run: dotnet build SQLCipherED.UI/SQLCipherED.UI.csproj -r ${{env.BUILD_ARCH}} -c Release
+       
+      - name: Zip build
+        run: cd ${{env.BUILD_DIR}} && zip ${{env.ZIP_FILE}} ${{env.BUILD_ARTIFACTS}}
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app_${{env.BUILD_ARCH}}
+          path: ${{env.BUILD_DIR}}/${{env.ZIP_FILE}}
+          
+  build_linux_x64:
+    name: Build Linux x64 release and upload artifact
+    needs: unit_tests
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARCH: linux-x64
+      BUILD_DIR: ./build/SQLCipherED.UI/Release/net6.0/linux-x64
+      #BUILD_ARTIFACTS: SQLCipherED.so runner-sqlcipher-ed.so runner-sqlcipher-ed runner-sqlcipher-ed.runtimeconfig.json
+      BUILD_ARTIFACTS: SQLCipherED.dll runner-sqlcipher-ed.dll runner-sqlcipher-ed runner-sqlcipher-ed.runtimeconfig.json
+      ZIP_FILE: sqlcipher-ed_linux-x64.zip
+     
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+         
+      - name: Build CLI app
+        run: dotnet build SQLCipherED.UI/SQLCipherED.UI.csproj -r ${{env.BUILD_ARCH}} -c Release
+       
+      - name: Zip build
+        run: cd ${{env.BUILD_DIR}} && zip ${{env.ZIP_FILE}} ${{env.BUILD_ARTIFACTS}}
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app_${{env.BUILD_ARCH}}
+          path: ${{env.BUILD_DIR}}/${{env.ZIP_FILE}}
+  
+  github_release_draft:
+    name: Make Github release draft
+    needs:
+      - build_win_x64
+      - build_win_x86
+      - build_linux_x64
+    env:
+      GITHUB_TOKEN: ${{ secrets.RELEASE_BUILD_TOKEN }}
+      RELEASE_VERSION: ${{ needs.build_win_x64.outputs.release_ver }}
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: ${{ github.event.repository.name }} ${{ env.RELEASE_VERSION }}
+          draft: true
+          
+  github_upload_release_artifacts:
+    name: Upload build artifacts to GIthub release
+    needs:
+      - github_release_draft
+      - build_win_x64
+      - build_win_x86
+      - build_linux_x64
+    env:
+      GITHUB_TOKEN: ${{ secrets.RELEASE_BUILD_TOKEN }}
+      RELEASE_VERSION: ${{ needs.build_win_x64.outputs.release_ver }}
+      UPLOAD_URL: ${{ needs.github_release_draft.outputs.upload_url }}
+    runs-on: ubuntu-latest
+    
+    steps: 
+      - name: Download win-x64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: app_win-x64
+          
+      - name: Upload win-x64 artifact to release assets
+        uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: sqlcipher-ed_win-x64.zip
+          asset_name: ${{ github.event.repository.name }} ${{ env.RELEASE_VERSION }}_win-x64.zip
+          asset_content_type: application/zip
+          
+      - name: Download win-x86 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: app_win-x86
+          
+      - name: Upload win-x86 artifact to release assets
+        uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: sqlcipher-ed_win-x86.zip
+          asset_name: ${{ github.event.repository.name }} ${{ env.RELEASE_VERSION }}_win-x86.zip
+          asset_content_type: application/zip
+          
+      - name: Download linux-x64 artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: app_linux-x64
+          
+      - name: Upload linux-x64 artifact to release assets
+        uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ env.UPLOAD_URL }}
+          asset_path: sqlcipher-ed_linux-x64.zip
+          asset_name: ${{ github.event.repository.name }} ${{ env.RELEASE_VERSION }}_linux-x64.zip
+          asset_content_type: application/zip
