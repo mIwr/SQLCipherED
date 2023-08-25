@@ -3,7 +3,7 @@
 
 Standalone SQLCipher database decryptor
 
-[SQLCipher major revisions](https://utelle.github.io/SQLite3MultipleCiphers/docs/ciphers/cipher_sqlcipher/)
+[SQLCipher major revisions (1,2,3,4)](https://utelle.github.io/SQLite3MultipleCiphers/docs/ciphers/cipher_sqlcipher/)
 
 [SQLCipher design info](https://www.zetetic.net/sqlcipher/design/)
 
