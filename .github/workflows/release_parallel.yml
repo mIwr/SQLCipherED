@@ -58,7 +58,7 @@ jobs:
         run: cd ${{env.BUILD_DIR}} && zip ${{env.ZIP_FILE}} ${{env.BUILD_ARTIFACTS}}
         
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: app_${{env.BUILD_ARCH}}
           path: ${{env.BUILD_DIR}}/${{env.ZIP_FILE}}
@@ -86,7 +86,7 @@ jobs:
         run: cd ${{env.BUILD_DIR}} && zip ${{env.ZIP_FILE}} ${{env.BUILD_ARTIFACTS}}
         
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: app_${{env.BUILD_ARCH}}
           path: ${{env.BUILD_DIR}}/${{env.ZIP_FILE}}
@@ -115,7 +115,7 @@ jobs:
         run: cd ${{env.BUILD_DIR}} && zip ${{env.ZIP_FILE}} ${{env.BUILD_ARTIFACTS}}
         
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: app_${{env.BUILD_ARCH}}
           path: ${{env.BUILD_DIR}}/${{env.ZIP_FILE}}
@@ -157,7 +157,7 @@ jobs:
     
     steps: 
       - name: Download win-x64 artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: app_win-x64
           
@@ -170,7 +170,7 @@ jobs:
           asset_content_type: application/zip
           
       - name: Download win-x86 artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: app_win-x86
           
@@ -183,7 +183,7 @@ jobs:
           asset_content_type: application/zip
           
       - name: Download linux-x64 artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: app_linux-x64
           
