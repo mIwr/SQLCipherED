@@ -31,34 +31,37 @@ namespace SQLCipherED.UI
 
         static void Main(string[] args)
         {
-            var parseStatus = ProcessArgs(args);
-            if (parseStatus)
-            {                
-                var sqlcipherCryptEng = new SQLCipherCryptEng(_kdfIter, _kdfAlgo, _pageSize, _kdfAlgo);
-                var reader = new BinaryReader(File.OpenRead(_sourcePath));
-                var outData = Array.Empty<byte>();
-                Console.WriteLine("Decrypting '" + _sourcePath + '\'');
-                try
+            if (!ProcessArgs(args))
+            {
+#if DEBUG
+                Console.ReadKey();
+#endif
+                return;
+            }
+            var sqlcipherCryptEng = new SQLCipherCryptEng(_kdfIter, _kdfAlgo, _pageSize, _kdfAlgo);
+            var reader = new BinaryReader(File.OpenRead(_sourcePath));
+            var outData = Array.Empty<byte>();
+            Console.WriteLine("Decrypting '" + _sourcePath + '\'');
+            try
+            {
+                if (_hexKey.Length != 0)
                 {
-                    if (_hexKey.Length != 0)
-                    {
-                        outData = sqlcipherCryptEng.Decode(reader, _hexKey);
-                    }
-                    else
-                    {
-                        outData = sqlcipherCryptEng.Decode(reader, _passphrase);
-                    }
-                    Console.WriteLine("Done");
+                    outData = sqlcipherCryptEng.Decode(reader, _hexKey);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine("Error: " + ex.Message);
-                }               
-                reader.Close();
-                if (outData.Length != 0)
-                {
-                    File.WriteAllBytes(_outPath, outData);
-                }                
+                    outData = sqlcipherCryptEng.Decode(reader, _passphrase);
+                }
+                Console.WriteLine("Done");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            reader.Close();
+            if (outData.Length != 0)
+            {
+                File.WriteAllBytes(_outPath, outData);
             }
 #if DEBUG
             Console.ReadKey();

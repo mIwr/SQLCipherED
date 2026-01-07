@@ -84,7 +84,14 @@ namespace SQLCipherED
             KdfIter = standard.KdfIter();
             PbkdfAlgo = standard.PbkdfAlgo();
             PageSize = standard.PageSize();
-            HmacPbkdfAlgo = standard == SQLCipherStandard.V1 ? null : standard.PbkdfAlgo();
+            if (standard == SQLCipherStandard.V1)
+            {
+                HmacPbkdfAlgo = null;
+            }
+            else
+            {
+                HmacPbkdfAlgo = standard.PbkdfAlgo();
+            }
             HmacKdfIter = standard.FastKdfIter();
             HmacSaltMask = standard.HmacSaltMask();
         }
@@ -95,6 +102,7 @@ namespace SQLCipherED
         /// <param name="kdfIter">Key derivation iterations count</param>
         /// <param name="kdfAlgo">Key derivation algo</param>
         /// <param name="pageSize">SQLCipher db page size</param>
+        /// <param name="hmacKdfAlgo">.NET hash algo name</param>
         /// <param name="hmacKdfIter"></param>
         /// <param name="hmacSaltMask"></param>
         /// <exception cref="ArgumentException"></exception>
@@ -108,7 +116,7 @@ namespace SQLCipherED
             {
                 throw new ArgumentException(message: "Incorrect HMAC KDF iterations value, must be at least 1");
             }
-            var logVal = Math.Log2(pageSize);
+            var logVal = Math.Log(pageSize, newBase: 2);
             var delta = logVal - Math.Truncate(logVal);
             if (pageSize < 512 || delta != 0.0)
             {
@@ -329,7 +337,8 @@ namespace SQLCipherED
             }
 
             var decodedWriter = new MemoryStream();
-            decodedWriter.Write(Encoding.UTF8.GetBytes(Constants.SQLiteHeader));
+            var bytes = Encoding.UTF8.GetBytes(Constants.SQLiteHeader);
+            decodedWriter.Write(bytes, offset: 0, count: bytes.Length);
             var buffer = new byte[PageSize];
             int readCount;
             //Decrypt the custom 1st page
@@ -341,8 +350,8 @@ namespace SQLCipherED
             if (finalBlock.Length != 0)
             {
                 decodedWriter.Write(finalBlock, offset: 0, finalBlock.Length);
-            } 
-            decodedWriter.Write(new byte[PageSize - readCount - Constants.SaltSize - finalBlock.Length]);            
+            }
+            decodedWriter.Write(new byte[PageSize - readCount - Constants.SaltSize - finalBlock.Length], offset: 0, count: PageSize - readCount - Constants.SaltSize - finalBlock.Length);            
 
             //Decrypt the next pages
             while (sqlcipher.BaseStream.Position < sqlcipher.BaseStream.Length)
@@ -373,7 +382,7 @@ namespace SQLCipherED
                 {
                     decodedWriter.Write(finalBlock, offset: 0, finalBlock.Length);
                 }
-                decodedWriter.Write(new byte[PageSize - readCount - finalBlock.Length]);
+                decodedWriter.Write(new byte[PageSize - readCount - finalBlock.Length], offset: 0, count: PageSize - readCount - finalBlock.Length);
             }
             var decrypted = decodedWriter.ToArray();
             decodedWriter.Close();

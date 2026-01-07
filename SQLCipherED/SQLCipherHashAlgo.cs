@@ -2,13 +2,35 @@
 
 namespace SQLCipherED
 {
+    /// <summary>
+    /// SQLCipher hash algo
+    /// </summary>
     public enum SQLCipherHashAlgo: byte
     {
-        SHA1, SHA256, SHA512
+        /// <summary>
+        /// SHA1
+        /// </summary>
+        SHA1, 
+        /// <summary>
+        /// SHA256
+        /// </summary>
+        SHA256,
+        /// <summary>
+        /// SHA512
+        /// </summary>
+        SHA512
     }
 
+    /// <summary>
+    /// SQLCipher hash algo extension
+    /// </summary>
     public static class SQLCipherHashAlgoExt
     {
+        /// <summary>
+        /// Tries to parse SQLCipher hash algo from .NET hash algo
+        /// </summary>
+        /// <param name="algName">.NET hash algo name</param>
+        /// <returns></returns>
         public static SQLCipherHashAlgo? From(HashAlgorithmName algName)
         {
             var name = algName.Name ?? string.Empty;
@@ -28,6 +50,11 @@ namespace SQLCipherED
             return null;
         }
 
+        /// <summary>
+        /// .NET hash algo
+        /// </summary>
+        /// <param name="algo">SQLCipher hash algo</param>
+        /// <returns></returns>
         public static HashAlgorithmName HashAlg(this SQLCipherHashAlgo algo)
         {
             switch (algo)
@@ -40,6 +67,11 @@ namespace SQLCipherED
             return HashAlgorithmName.SHA1;
         }
 
+        /// <summary>
+        /// Hash size
+        /// </summary>
+        /// <param name="algo">SQLCipher hash algo</param>
+        /// <returns></returns>
         public static byte Size(this SQLCipherHashAlgo algo)
         {
             switch (algo)
